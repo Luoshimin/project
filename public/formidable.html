@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文本编辑框</title>
+    <link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="vendor/Summernote/dist/summernote.css">
+</head>
+<body>
+
+<div id="summernote"></div>
+<p>
+    <button id="sub" class="btn btn-primary btn-block button">发表</button>
+</p>
+
+<!--新闻章的链接-->
+<p class="res">链接</p>
+
+
+<script src="vendor/jquery/dist/jquery.min.js"></script>
+<script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="vendor/Summernote/dist/summernote.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+
+        //只是负责将图片上传到服务器，然后在页面编辑框里呈现出来
+        $("#summernote").summernote({
+            width:'100%',
+            height:'400px',
+            callbacks:{
+                //当在summernote中发生图片选择事件后，进行上传图片
+                onImageUpload:function (files) {
+
+                    var len=files.length;
+                    for(var i=0;i<len;i++){
+                        sendFile(files[i]);
+                    }
+                }
+
+            }
+
+        });
+
+        function sendFile(file) {
+            data=new FormData();
+            data.append("myfile",file);
+
+//            发表到页面（另一个）
+
+
+            $.ajax({
+                data:data,
+                type:"POST",
+                url:"/getimedata",
+                cache:false,
+                contentType:false,
+                processData:false,
+                success:function (url) {
+                    $("#summernote").summernote('insertImage',url);
+                }
+            });
+
+
+            $("#sub").click(function () {
+//                alert("aaa");
+                var artioleMsg='dataMsg='+$('#summernote').summernote('code');
+                console.log(artioleMsg);
+                $.ajax({
+                    type:"POST",
+                    url:"/jsondata",
+                    dataType:"text",
+                    data:artioleMsg,
+                    success:function (msg) {
+                        console.log(msg);
+                        var path="message.html?data="+msg;
+                        var name=Date.now();
+                        $(".res").append('<a target="_blank" href='+path+'>'+name+'</a>');
+                    },
+                    error:function (jqXHR) {
+                        console.log(jqXHR.status);
+                    }
+                })
+            });
+
+
+            //因为浏览器不同，有的选择图片比较慢，这段话就是让选择图片的时候能够快一点
+            $('.note-icon-picture').parent().click(function () {
+                $('.note-image-input')[0].accepts='image/png,image/jpg';
+            });
+        }
+
+
+
+
+    })
+
+
+
+
+
+</script>
+
+
+
+</body>
+</html>
