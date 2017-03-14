@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>页面异步刷新（POST）</title>
+    <style>
+        .div{
+            width: 400px;
+            height: 300px;
+            border:1px solid red
+        }
+
+    </style>
+</head>
+<body>
+<label>名字</label>
+<input type="text" name="userName" id="userName">
+<br>
+<label>密码</label>
+<input type="text" name="password" id="password">
+<br>
+<label>确认密码</label>
+<input type="text" name="password2" id="password2">
+
+<br>
+<input type="submit" id="btn" value="提交">
+
+
+
+<div class="div">
+    <p>名字<span id="name"></span></p>
+    <p>密码<span id="pass"></span></p>
+    <p>确认密码<span id="pass2"></span></p>
+</div>
+
+
+<script>
+    window.onload=function () {
+        document.getElementById('btn').onclick=function () {
+
+            var XMLRequest;
+            if(new XMLHttpRequest()){
+                XMLRequest=new XMLHttpRequest();
+            }else{
+                XMLRequest=ActiveXObject('microsoft.XMLHTTP');
+            }
+
+            var userName=document.getElementById('userName').value;
+            var password=document.getElementById('password').value;
+            var password2=document.getElementById('password2').value;
+
+            XMLRequest.open('POST','/user',true);
+            XMLRequest.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+
+            var data="userName="+userName+"&password="+password+"&password2="+password2;
+            XMLRequest.send(data);
+
+            XMLRequest.onreadystatechange=function(){
+                if(XMLRequest.readyState===4){
+                    if(XMLRequest.status==200){
+                        var json=JSON.parse(XMLRequest.responseText);    //转换JSON格式
+                        document.getElementById('name').innerHTML=json.userName;
+                        document.getElementById('pass').innerHTTM=json.password;
+                        document.getElementById('pass2').innerHTML=json.password2;
+                        // alert("aaa");
+                    }else{
+                        alert('传参错误');
+                    }
+                }
+            }
+        }
+    }
+</script>
+
+</body>
+</html>

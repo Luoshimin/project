@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>上传文件</title>
+</head>
+<body>
+
+<form>
+
+    <!--多选  multiple-->
+    <input type="file" name="imgfile" accept="image/jpeg,image/png" multiple>
+    <button type="button" class="imgbtn">Submit</button>
+</form>
+
+<form>
+
+    <input type="file" name="imgfile" accept="video/mp4">
+    <button type="button"  class="videobtn">Submit</button>
+</form>
+
+
+<div class="img_box">
+
+</div>
+<div class="video_box">
+
+</div>
+
+
+<script src="vendor/jquery/dist/jquery.min.js"></script>
+<script>
+    $('.imgbtn').click(function () {
+//        document.getElementById('ff').files[0];
+        var file=$(this).prev()[0];   //紧挨着上一个兄弟元素
+        var thisFile=file.files;   //选择多个文件
+        for(var i=0;i<thisFile.length;i++){
+            sendFile(thisFile[i],'img_box');
+        }
+    });
+
+    $('.videobtn').click(function () {
+        var file=$(this).prev()[0];   //紧挨着上一个兄弟元素
+        var thisFile=file.files;   //选择多个文件
+        for(var i=0;i<thisFile.length;i++){
+            sendFile(thisFile[i],'video_box');
+        }
+    });
+
+
+    function sendFile(file,dom) {
+        data=new FormData();    //创建一个媒体数据
+        data.append("imgfile",file);
+        $.ajax({
+            data:data,
+            type: "post",        //传送类型
+            url: "/fileData",    //路由地址
+            cache:false,
+            contentType:false,
+            processData:false,
+            success: function(url){    //返回数据
+                if(dom=='img_box'){
+                    $('.'+dom).append("<img src="+url+">");
+//                    var img=document.createElement("img");
+//                    img.src=url;
+//                    document.getElementsByClassName(dom)[0].append(img);
+                }else{
+//                    $('.'+dom).append("<video src="+url+" controls="+controls+"></video>");
+                    var video=document.createElement("video");
+                    video.src=url;
+                    video.controls="controls";
+                    document.getElementsByClassName(dom)[0].append(video);
+                }
+            }
+        });
+    }
+</script>
+
+
+
+
+
+</body>
+</html>

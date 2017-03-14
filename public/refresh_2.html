@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>页面异步刷新（GET）</title>
+</head>
+<body>
+<div class="div">
+    <label>客户名称：</label>
+    <input type="text" name="CustomerName" id="username">
+</div>
+
+<div class="div">
+    <label>客户电话：</label>
+    <input type="text" name="CustomerTel" id="phones">
+</div>
+
+<button  id="btnA" type="button"  value="提交">提交</button>
+
+<!------------------------------------------------------------------------------------------>
+<div class="div">
+    <p>用户名：<span id="usernameTwo"></span></p>
+    <p>电话：<span id="phoneTwo"></span></p>
+</div>
+
+
+
+<!----------------------------------------------------------------------------------------------->
+<script>
+        document.getElementById("btnA").onclick=function(){
+
+            //判断兼容
+            var XMLRequest;
+            if(new XMLHttpRequest()){
+                XMLRequest = new XMLHttpRequest();
+            }else{
+                //IE8以下
+                XMLRequest = new ActiveXObject('microsoft.XMLHTTP');
+            }
+
+            var username=document.getElementById("username").value;
+//            console.log(username);
+            var phones=document.getElementById("phones").value;
+
+            //get方法
+            // 路由地址：/aaa   参数：?username...
+            //    XMLRequest.open("GET","/user?number="+12+'&number2='+122,true);
+            XMLRequest.open("GET","/aaa?username="+username+"&phones="+phones,true);
+
+            //发送请求
+            XMLRequest.send();
+            XMLRequest.onreadystatechange=function(){
+                if(XMLRequest.readyState===4){
+                    if(XMLRequest.status==200){
+//                        console.log(XMLRequest.responseText)
+                        var dadad=JSON.parse(XMLRequest.responseText);    //转换JSON对象
+                        document.getElementById("usernameTwo").innerHTML=dadad.username;
+                        document.getElementById("phoneTwo").innerHTML=dadad.phones;
+//                        alert(XMLRequest.responseText);
+                    }else{
+                        alert("参数错误！！！")
+                    }
+                }
+
+            }
+        };
+
+</script>
+
+
+</body>
+</html>

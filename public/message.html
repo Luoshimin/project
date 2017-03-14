@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>从formidable.html发送过来的内容</title>
+</head>
+<body>
+
+<section class="box">
+
+
+</section>
+
+<script src="vendor/jquery/dist/jquery.min.js"></script>
+<script>
+    $(function () {
+
+        //截取地址
+        console.log(location.href);
+        var arr=location.href.split('?');
+        console.log(arr);
+        var src=arr[1].split('=')[1].split('public/')[1];
+
+        console.log(src);
+        $.get(src,function (data) {
+            console.log(data);
+            $('.box').append(data.dataMsg);
+        });
+    })
+
+</script>
+
+
+
+</body>
+</html>
